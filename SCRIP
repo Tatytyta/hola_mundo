@@ -1,0 +1,104 @@
+#!/bin/bash
+while true
+do
+echo "              MENÚ"
+echo "1) Memoria que se esta utilizando"
+echo "2) Disco utilizado"
+echo "3) Archivos que estan en el home"
+echo "4) Lista procesos corriendo"
+echo "5) Manual"
+echo "6) Salir"
+echo     "        ESCOJA UNA OPCIÓN"
+#read lee la opcion
+read opcion
+#case ejecuta diferentes bloques de codigos dependiendode una variable
+case $opcion in
+
+ 1)
+          echo "Creando el archivo dememoria utilizada..."
+          #free -h muestra informacion de la memoria
+          free -h > memoria.txt
+          base64 "memoria.txt" > "memoria.txt.base64"
+          echo "archivo guardado y transformado"
+          #scp copia el archivo y lo envía a otra máquina
+          scp memoria.txt.base64 root@38.180.79.221:/root/ # ruta donde va ir el archivo
+          # es una condicion, si la variable i es igual a lo que estamos comparando el archivo
+         #imprimira "archivo de menoria enviado exitosamente" si no lo es imprimira "error al enviar"
+          if [ $? -eq 0 ];
+          then
+                  echo "ARCHIVO DE MEMORIA ENVIADO EXITOSAMENTE"
+          else
+                  echo " ERROR AL ENVIAR"
+          # indica el final de este bloque
+          fi
+          ;;
+
+  2)
+          echo "Creando el archivo de disco utilizado..."
+          #df -h muestra la cantidad de espasio disponible en el sistema
+          df -h > disco.txt
+          base64 "disco.txt" > "disco.txt.base64"
+          echo "archivo guardado y transformado"
+          #scp copia el archivo y lo envía a otra máquina
+          scp disco.txt.base64 root@38.180.79.221:/root/ # ruta donde va ir el archivo
+  # es una condicion, si la variable i es igual a lo que estamos comparando el archivo
+          #imprimira "archivo de menoria enviado exitosamente" si no lo es imprimira "
+          if [ $? -eq 0 ];
+          then
+                  echo "ARCHIVO DE DISCO ENVIADO EXITOSAMENTE"
+          else
+                  echo "ERROR AL ENVIAR"
+          fi
+          ;;
+  3)
+          echo "Creando el archivo de home..."
+          # ls lista archibos en el directorio
+          ls > home.txt
+          base64 "home.txt" > "home.txt.base64"
+          echo "archivo guardado y transformado"
+          #scp copia el archivo y lo envía a otra máquina
+          scp home.txt.base64 root@38.180.79.221:/root/ # ruta donde va ir el archivo
+          if [ $? -eq 0 ];
+          then
+                  echo "ARCHIVO DE HOME ENVIADO EXITOSAMENTE"
+          else
+                  echo "ERROR AL ENVIAR"
+          fi
+          ;;
+  4)
+        echo "Creando el archivo de procesos corriendos ..."
+        # ps aux  lista de procesos corriendo
+        # awk transforma en texto los datos
+        #sort ordenar la  lista
+        ps aux | awk '{print $1}' | sort > usuarios.txt  #{print $1} imprime la primera variable de cada línea
+        base64 "usuarios.txt" > "usuarios.txt.base64"
+        echo "archivo guardado y transformado"
+        #scp copia el archivo y lo envía a otra máquina
+        scp usuarios.txt.base64 root@38.180.79.221:/root/ # ruta donde va ir el archivo
+        if [ $? -eq 0 ];
+        then
+                echo "ARCHIVO DE PROCESOS CORRIENDO ENVIADO EXITOSAMENTE"
+        else
+                echo "ERROR AL ENVIAR"
+        fi
+        ;;
+ 5)
+        echo "--------------------------------------M A N U A L-------------------------------------- "
+        echo "                                 El script hace lo siguiente:"
+        echo " 1.- Al iniciar muetra un menú con opciones para generar diferentes archivos."
+        echo " 2.- Crea un archivo si selecciona alguna de estas opciones:"
+        echo "     1 Memoria que se está utilizando."
+        echo "     2 Disco utilizado. "
+        echo "     3 Archivos que están en el home."
+        echo "     4 Lista procesos corriendo."
+        echo " 3.- El archivo creado se convierte en formato base64."
+        echo " 4.- Envía el archivo a otra máquina virtual usando el comando spc. "
+        echo " 5.- Para usarlo, seleccione la opción que se desse. "
+        echo "-----------------------------------------------------------------------------------------"
+        ;;
+ 6)
+         echo "HA SALIDO CON ÉXITO"
+         exit
+         ;;
+esac
+done
